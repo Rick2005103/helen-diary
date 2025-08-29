@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>My Diary</title>
+<style>
+  :root{
+    --accent:#d6336c;
+    --muted:#6b6b6b;
+    --bg1:#fff0f5;
+  }
+  html,body{height:100%;margin:0;font-family: "Calibri","Segoe UI", Roboto, sans-serif;background: linear-gradient(180deg, #ffe9ee 0%, #fff 38%, #fff0f6 100%);}
+  header{background:rgba(255,255,255,0.9);border-bottom:1px solid rgba(214,51,108,0.08);position:sticky;top:0;z-index:20;padding:14px 18px;display:flex;align-items:center;gap:12px}
+  .logo{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffd6e0,#ffeef6);color:var(--accent);font-weight:700;font-size:20px}
+  .wrap{max-width:960px;margin:18px auto;padding:0 16px;}
+  h1{margin:0;color:var(--accent);font-size:20px}
+  .sub{color:var(--muted);font-size:13px;margin-top:2px}
+
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:16px}
+  @media(max-width:940px){.grid{grid-template-columns:1fr}}
+
+  .card{background:#fff;border:1px solid rgba(214,51,108,0.06);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,0.04)}
+
+  label{display:block;font-weight:600;margin-top:8px;color:#444;font-size:13px}
+  input[type="text"], input[type="date"], textarea, select{
+    width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:1px solid #e7e7e7;font-size:14px;margin-top:6px;outline:none;
+  }
+  textarea{min-height:120px;resize:vertical}
+  .row{display:flex;gap:10px;align-items:center}
+  .btn{display:inline-flex;gap:8px;align-items:center;padding:9px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700;background:var(--accent);color:#fff}
+  .btn.secondary{background:#fff;border:1px solid rgba(0,0,0,0.06);color:var(--accent)}
+  .small{font-size:12px;color:var(--muted)}
+
+  .entries-list{max-height:64vh;overflow:auto;padding-right:6px}
+  .entry{border-top:1px solid rgba(0,0,0,0.04);padding:12px 6px;position:relative}
+  .entry h3{margin:0;font-size:15px;color:var(--accent)}
+  .meta{font-size:12px;color:var(--muted);margin-top:6px}
+  .body{white-space:pre-wrap;line-height:1.55;margin-top:8px}
+  .controls{position:absolute;right:8px;top:8px;display:flex;gap:6px}
+  .icon-btn{background:transparent;border:0;padding:6px;border-radius:8px;cursor:pointer}
+  .icon-btn:hover{background:rgba(0,0,0,0.03)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="display:flex;align-items:center;width:100%;gap:12px;padding:0">
+    <div class="logo">R♥</div>
+    <div style="flex:1">
+      <h1>My Diary</h1>
+      <div class="sub">Daily letters from Rick — saved privately in this browser.</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="q" placeholder="Search (press Enter)" style="padding:8px;border-radius:999px;border:1px solid #eee" />
+      <button id="exportMd" class="btn secondary" title="Export Markdown">Export .md</button>
+      <button id="exportJson" class="btn secondary" title="Export JSON">Export .json</button>
+      <button onclick="window.print()" class="btn secondary">Print</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <div>
+      <section class="card" style="position:relative;z-index:2">
+        <h2 style="margin:0 0 8px 0;color:var(--accent)">New Entry</h2>
+        <div style="display:flex;gap:10px;margin-bottom:8px">
+          <div style="flex:1">
+            <label for="date">Date</label>
+            <input id="date" type="date" />
+          </div>
+          <div style="width:160px">
+            <label for="mood">Mood</label>
+            <select id="mood">
+              <option value="">-- pick mood --</option>
+              <option>Happy 😀</option>
+              <option>Sad 😢</option>
+              <option>Excited 🤩</option>
+              <option>Tired 😴</option>
+              <option>Angry 😡</option>
+              <option>Calm 🌿</option>
+              <option>Lonely 🥀</option>
+              <option>Loved ❤️</option>
+              <option>Stressed 😰</option>
+              <option>Hopeful 🌅</option>
+              <option>Confused 🤔</option>
+              <option>Grateful 🙏</option>
+              <option>Bored 😐</option>
+              <option>Proud 🏆</option>
+              <option>Nervous 😬</option>
+              <option>Relaxed 🛋️</option>
+              <option>Inspired ✨</option>
+              <option>Missing Someone 💭</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="title">Title (optional)</label>
+        <input id="title" type="text" placeholder="A short title or memory">
+
+        <label for="body">Letter</label>
+        <textarea id="body" placeholder="Hi my love,&#10;&#10;It’s Day 1 without you..."></textarea>
+
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+          <button id="saveBtn" class="btn">Save Entry</button>
+          <button id="clearBtn" class="btn secondary">Clear</button>
+          <div class="small" style="margin-left:auto">Saved to this browser only • not shared</div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top:16px">
+        <h2 style="margin:0 0 8px 0;color:var(--accent)">All Entries <span id="count" class="small"></span></h2>
+        <div id="entries" class="entries-list" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <aside>
+      <section class="card">
+        <h3 style="margin:0 0 8px 0;color:var(--accent)">How to use</h3>
+        <p class="small">• Write a short letter each day. Use the date field to keep things accurate.<br>
+        • Click an entry's ✎ to edit or 🗑 to delete it.<br>
+        • Export to .md for a printable book or .json for backup.</p>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<script>
+  const KEY = 'myDiary.entries.v1';
+  let entries = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+  // DOM
+  const dateInput = document.getElementById('date');
+  const moodInput = document.getElementById('mood');
+  const titleInput = document.getElementById('title');
+  const bodyInput = document.getElementById('body');
+  const saveBtn = document.getElementById('saveBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const entriesDiv = document.getElementById('entries');
+  const countSpan = document.getElementById('count');
+  const q = document.getElementById('q');
+  const exportMd = document.getElementById('exportMd');
+  const exportJson = document.getElementById('exportJson');
+
+  let editingId = null;
+
+  function uid(){ return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+  function todayISO(){ return new Date().toISOString().slice(0,10); }
+  function fmtDate(iso){ const d = new Date(iso); return d.toLocaleString(); }
+  function escapeHTML(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // initialize
+  dateInput.value = todayISO();
+  renderEntries();
+
+  // Save / Update
+  saveBtn.addEventListener('click', ()=>{
+    const date = dateInput.value || todayISO();
+    const mood = moodInput.value || '';
+    const title = titleInput.value.trim() || '';
+    const body = bodyInput.value.trim();
+    if (!body) return alert('Please write something ✍️');
+
+    if (editingId) {
+      const i = entries.findIndex(e=>e.id===editingId);
+      if (i !== -1) {
+        entries[i] = {...entries[i], date, mood, title, body, updatedAt: Date.now()};
+      }
+      editingId = null;
+      saveBtn.textContent = 'Save Entry';
+    } else {
+      entries.push({ id: uid(), date, mood, title, body, createdAt: Date.now() });
+    }
+
+    persistAndRender();
+    // reset
+    dateInput.value = todayISO();
+    moodInput.value = '';
+    titleInput.value = '';
+    bodyInput.value = '';
+  });
+
+  clearBtn.addEventListener('click', ()=>{
+    dateInput.value = todayISO(); moodInput.value=''; titleInput.value=''; bodyInput.value=''; editingId=null; saveBtn.textContent='Save Entry';
+  });
+
+  // Render
+  function renderEntries(filter='') {
+    entriesDiv.innerHTML = '';
+    countSpan.textContent = `(${entries.length})`;
+    if (!entries.length) {
+      entriesDiv.innerHTML = '<p class="small">No entries yet — write your first one above ✨</p>';
+      return;
+    }
+
+    const list = filter.trim() ? entries.filter(e=>{
+      const q = filter.toLowerCase();
+      return (e.title||'').toLowerCase().includes(q) || (e.body||'').toLowerCase().includes(q) || (e.mood||'').toLowerCase().includes(q) || (e.date||'').toLowerCase().includes(q);
+    }) : entries;
+
+    if (!list.length) {
+      entriesDiv.innerHTML = '<p class="small">No matching entries.</p>';
+      return;
+    }
+
+    // newest first
+    list.slice().reverse().forEach((e)=>{
+      const dayNumber = entries.indexOf(e) + 1;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'entry';
+
+      const safeTitle = escapeHTML(e.title || `Day ${dayNumber}`);
+      const safeBody = escapeHTML(e.body).replace(/\n/g,'<br>');
+
+      wrapper.innerHTML = `
+        <h3>${safeTitle}</h3>
+        <div class="meta">${fmtDate(e.date)} ${e.mood ? ' · Mood: '+escapeHTML(e.mood) : ''}${e.updatedAt ? ' · (edited)' : ''}</div>
+        <div class="body">${safeBody}</div>
+        <div class="controls">
+          <button class="icon-btn" title="Edit" onclick="editEntry('${e.id}')">✎</button>
+          <button class="icon-btn" title="Delete" onclick="deleteEntry('${e.id}')">🗑</button>
+        </div>
+      `;
+      entriesDiv.appendChild(wrapper);
+    });
+  }
+
+  // Persist + render
+  function persistAndRender(){
+    localStorage.setItem(KEY, JSON.stringify(entries));
+    renderEntries(q.value);
+  }
+
+  // Edit / Delete (exposed)
+  window.editEntry = function(id){
+    const e = entries.find(x=>x.id===id);
+    if (!e) return;
+    editingId = id;
+    dateInput.value = e.date || todayISO();
+    moodInput.value = e.mood || '';
+    titleInput.value = e.title || '';
+    bodyInput.value = e.body || '';
+    saveBtn.textContent = 'Update Entry';
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  window.deleteEntry = function(id){
+    if (!confirm('Delete this entry? This cannot be undone.')) return;
+    entries = entries.filter(x=>x.id!==id);
+    persistAndRender();
+  };
+
+  // Search (press Enter)
+  q.addEventListener('keydown', (ev)=>{
+    if (ev.key === 'Enter') renderEntries(q.value);
+  });
+
+  // Export Markdown
+  exportMd.addEventListener('click', ()=>{
+    if (!entries.length) return alert('No entries to export');
+    const lines = [];
+    lines.push('# My Diary — Rick');
+    lines.push('');
+    entries.forEach((e,i)=>{
+      lines.push('---');
+      lines.push('');
+      lines.push(`## ${escapeHTML(e.title || 'Day ' + (i+1))}`);
+      lines.push(`**Date:** ${e.date}${e.mood? '  |  **Mood:** '+escapeHTML(e.mood) : ''}`);
+      lines.push('');
+      lines.push(e.body);
+      lines.push('');
+    });
+    const blob = new Blob([lines.join('\n')], {type:'text/markdown'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `My-Diary_${new Date().toISOString().slice(0,10)}.md`; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),3000);
+  });
+
+  // Export JSON
+  exportJson.addEventListener('click', ()=>{
+    if (!entries.length) return alert('No entries to export');
+    const blob = new Blob([JSON.stringify(entries, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `My-Diary_${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),3000);
+  });
+</script>
+</body>
+</html>
